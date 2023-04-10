@@ -6,9 +6,12 @@ from pydantic import BaseModel
 app = FastAPI()
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+
+# es = Elasticsearch(
+#             host,
+#             basic_auth=(elasticsearch_username, elasticsearch_password),
+#             verify_certs=False,
+#         )
 
 def get_es_client():
     host = "http://127.0.0.1:9200"
@@ -23,6 +26,19 @@ def get_es_client():
         retry_on_timeout=True
     )
     return client
+
+class Article(BaseModel):
+    title: str
+    content: str
+    created_at: str
+
+class ArticleIndexModel(Document):
+    title = Text(fields={'raw': Keyword()})
+    content = Text()
+    created_at = Date()
+
+    class Index:
+        name = 'article_index'
 
 @app.get("/search/{keyword}")
 async def search_articles(keyword: str):
@@ -41,5 +57,5 @@ async def search_articles(keyword: str):
     return {"articles": articles}
 
 
-
-# uvicorn main:app --reload
+TT = get_es_client()
+print(TT.info())
