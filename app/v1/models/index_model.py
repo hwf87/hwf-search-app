@@ -1,33 +1,48 @@
-from datetime import datetime
-from elasticsearch_dsl import Document, Date, Integer, Keyword, Text
+from elasticsearch_dsl import Document, Date, Integer, Keyword, Text, DenseVector
 
-class BookIndex(Document):
-    title = Text(fields={'keyword': Keyword()})
-    author = Text(fields={'keyword': Keyword()})
-    summary = Text()
-    publisher = Text(fields={'keyword': Keyword()})
-    publication_date = Date()
-    edition = Integer()
 
+class IndexBase(Document):
+    uid = Text()
+    title = Text()
+    details = Text()
+    embeddings = DenseVector()
+    posted = Text()
+    tags = Keyword()
+    link = Text()
+
+class HouzzIndex(IndexBase):
+    author = Keyword()
+    description = Text()
+    related_tags = Keyword()
+    
     class Index:
-        name = 'book_index'
+        name = 'houzz'
 
-class MovieIndex(Document):
-    title = Text(fields={'keyword': Keyword()})
-    director = Text(fields={'keyword': Keyword()})
-    summary = Text()
-    release_date = Date()
-    genre = Keyword()
-
+class CnnIndex(IndexBase):
+    channel = Keyword()
+    comment_count = Text()
+    likes = Text()
+    views = Text()
+    
     class Index:
-        name = 'movie_index'
+        name = 'cnn'
 
-class MusicIndex(Document):
-    title = Text(fields={'keyword': Keyword()})
-    artist = Text(fields={'keyword': Keyword()})
-    album = Text(fields={'keyword': Keyword()})
-    release_date = Date()
-    genre = Keyword()
-
+class TedtalkIndex(IndexBase):
+    author = Keyword()
+    views = Text()
+    
     class Index:
-        name = 'music_index'
+        name = 'tedtalk'
+
+
+# class MovieIndex(Document):
+#     title = Text(fields={'keyword': Keyword()})
+#     director = Text(fields={'keyword': Keyword()})
+#     summary = Text()
+#     release_date = Date()
+#     genre = Keyword()
+
+#     class Index:
+#         name = 'movie_index'
+
+
