@@ -1,12 +1,12 @@
 from elasticsearch import Elasticsearch
+from config import settings
+
 
 def get_es_client() -> Elasticsearch:
-    host = "http://127.0.0.1:9200"
-    elasticsearch_username = "elastic"
-    elasticsearch_password = "elastic"
+    """ """
     client = Elasticsearch(
-        host,
-        http_auth=(elasticsearch_username, elasticsearch_password),
+        settings.ES_HOST,
+        http_auth=(settings.ES_USERNAME, settings.ES_PASSWORD),
         verify_certs=False,
         timeout=30,
         max_retries=10,
