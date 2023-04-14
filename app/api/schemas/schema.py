@@ -1,7 +1,5 @@
-from typing import List, Dict, Optional
 from pydantic import BaseModel
-from elasticsearch import Elasticsearch
-from elasticsearch_dsl import Search, Document, Text, Keyword, Date 
+from typing import List, Dict, Optional
 
 
 class Items(BaseModel):
@@ -28,16 +26,16 @@ class TedtalkItems(Items):
     author: str
     views: str
 
-# class HighlightObj(BaseModel):
-#     highlight: Dict
-
 class AggregationObj(BaseModel):
-    aggregation: Dict
+    key: str
+    doc_count: int
 
 class SuggestionObj(BaseModel):
-    suggestion: Dict
+    text: str
+    score: float
+    freq: int
 
 class KwSearch(BaseModel):
-    items: Items
-    aggregation: Dict
-    suggestion: Dict
+    items: List[Items]
+    aggregations: List[AggregationObj]
+    suggestions: List[SuggestionObj]

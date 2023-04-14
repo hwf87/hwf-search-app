@@ -1,7 +1,7 @@
 from pydantic import BaseSettings
 
 
-class Settings(BaseSettings):
+class AppSettings(BaseSettings):
     APP_NAME: str = "HWF SEARCH API"
     ES_HOST: str
     ES_USERNAME: str 
@@ -11,4 +11,10 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
 
-settings = Settings()
+class SearchSettings(AppSettings):
+    SERCH_FIELDS: list = []
+    AGGREGATION_FIELDS: list = []
+    HIGHLIGHT_FIELDS: list = []
+
+
+settings = SearchSettings()

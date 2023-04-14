@@ -1,16 +1,13 @@
-import os
 import sys
-from fastapi import APIRouter, Depends, Query, Path
-from typing import List, Optional, Dict, Any
-from pydantic import BaseModel
-from elasticsearch import Elasticsearch
-from elasticsearch_dsl import Search, Document, Text, Keyword, Date
+from typing import List, Optional
+from elasticsearch_dsl import Search
+from fastapi import APIRouter, Query, Path, Depends
+
+from config import settings
+from api.schemas.schema import Items, KwSearch
 from db.elastic import get_es_client
 from dependency import get_token_header
-from config import settings
-from api.schemas.schema import Items
-
-print(sys.path)
+from utils.search_utils import parse_kw_search, parse_response_to_items
 
 router = APIRouter(
     prefix="/search",
@@ -18,33 +15,6 @@ router = APIRouter(
     # dependencies=[Depends(get_token_header)],
     responses={404: {"description": "Not found"}}
 )
-
-
-def parse_response_to_items(response: Dict[str, Any]) -> List[Items]:
-    """ """
-    list_of_format_items = [
-        {
-            "uid": meta["_source"].get("uid", ""),
-            "title": meta["_source"].get("title", ""),
-            "details": meta["_source"].get("details", ""),
-            "tags": meta["_source"].get("tags", []),
-            "posted": meta["_source"].get("posted", ""),
-            "link": meta["_source"].get("link", ""),
-            "highlight": meta.get("highlight", {})
-        }
-        for meta in response["hits"]["hits"]
-    ]
-
-    return list_of_format_items
-
-
-def parse_aggregations():
-    """ """
-    return ""
-
-def parse_suggestions():
-    """ """
-    return ""
 
 @router.get("/{kanban}")
 async def kw_search(
@@ -59,36 +29,33 @@ async def kw_search(
             max_length=200,
         ), 
         offset: Optional[int] = Query(0, ge=0), 
-        limit: Optional[int] = Query(10, ge=0, le=100)):
+        limit: Optional[int] = Query(10, ge=0, le=100)) -> KwSearch:
+    """ """
     es = get_es_client()
     search = Search(using=es, index=kanban)
     
-    search = search.query("multi_match", query=query, fields=["uid", "title", "details"])
-    search = search.suggest('my_suggestion', 'Desinger', term={'field': 'title'})
-    search = search.highlight('title', 'details', pre_tags='<strong>', post_tags='</strong>', fragment_size=50, number_of_fragments=3)
-    search = search[offset:offset+limit]
-    search.aggs.bucket('agg', 'terms', field='tags')
+    search = search.query(
+                "multi_match", 
+                query = query, 
+                fields = ["uid", "title", "details"]
+            )
+    search = search.suggest(
+                'my_sug',
+                query, 
+                term = {'field': 'title'}
+            )
+    search = search.highlight(
+                'title', 'details',
+                pre_tags = '<strong>',
+                post_tags = '</strong>',
+                fragment_size = 50,
+                number_of_fragments = 3
+            )
+    search = search[offset : offset + limit]
+    search.aggs.bucket('my_agg', 'terms', field='tags')
+    response = search.execute().to_dict()
 
-    # create a multi-fields aggregation
-    # multi_fields_agg = MultiTerms(fields=["field1", "field2", "field3"])
-    # terms_agg = Terms(field="category")
-
-    # add the multi-fields aggregation to the search object
-    # search.aggs.bucket("my_agg", terms_agg)
-
-    response = search.execute()
-
-    articles = []
-    for hit in response:
-        article = hit.to_dict()
-        articles.append(article)
-
-    response = response.to_dict()
-    aggregations = response["aggregations"]["agg"]["buckets"]
-    suggestion = response["suggest"]["my_suggestion"]
-
-    # return {"aggregations": aggregations, "articles": articles}
-    return response
+    return parse_kw_search(response)
 
 @router.get("/tag/{name}")
 async def tag_search(
@@ -111,10 +78,10 @@ async def tag_search(
 async def semantic_search():
     """ """
 
-    return {"hello": "search"}
+    return {"hello": "semantic"}
 
 @router.get("/qanda")
 async def qa_search():
     """ """
 
-    return {"hello": "search"}
+    return {"hello": "qanda"}

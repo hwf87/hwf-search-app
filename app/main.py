@@ -1,9 +1,7 @@
 from fastapi import FastAPI
-from elasticsearch import Elasticsearch
-from elasticsearch_dsl import Search, Document, Text, Keyword, Date 
-from pydantic import BaseModel
-from api.routers import search, items, recommend, kanbans
+
 from config import settings
+from api.routers import search, items, recommend, kanbans
 
 app = FastAPI(title=settings.APP_NAME)
 

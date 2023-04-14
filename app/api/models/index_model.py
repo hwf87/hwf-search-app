@@ -1,4 +1,4 @@
-from elasticsearch_dsl import Document, Date, Integer, Keyword, Text, DenseVector
+from elasticsearch_dsl import Document, Keyword, Text, DenseVector
 
 
 class IndexBase(Document):
