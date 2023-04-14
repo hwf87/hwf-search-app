@@ -20,7 +20,7 @@ router = APIRouter(
 async def kw_search(
         kanban: str = Path(
             ...,
-            title = "Tag Name"
+            title = "Kanban Name"
         ),
         query: str = Query(
             "hello world",

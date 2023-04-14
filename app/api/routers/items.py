@@ -8,7 +8,6 @@ from elasticsearch_dsl import Search, Document, Text, Keyword, Date
 from db.elastic import get_es_client
 from dependency import get_token_header
 
-print(sys.path)
 
 router = APIRouter(
     prefix="/items",

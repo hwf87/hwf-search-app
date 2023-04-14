@@ -39,3 +39,9 @@ class KwSearch(BaseModel):
     items: List[Items]
     aggregations: List[AggregationObj]
     suggestions: List[SuggestionObj]
+
+class KanbanSchema(BaseModel):
+    name: Optional[str]
+    alias: Optional[str]
+    settings: Optional[Dict]
+    mappings: Dict
