@@ -35,14 +35,3 @@ class TedtalkIndex(IndexBase):
         name = 'tedtalk'
 
 
-# class MovieIndex(Document):
-#     title = Text(fields={'keyword': Keyword()})
-#     director = Text(fields={'keyword': Keyword()})
-#     summary = Text()
-#     release_date = Date()
-#     genre = Keyword()
-
-#     class Index:
-#         name = 'movie_index'
-
-

@@ -1,4 +1,3 @@
-import sys
 from typing import List, Optional
 from elasticsearch_dsl import Search
 from fastapi import APIRouter, Query, Path, Depends
@@ -20,7 +19,8 @@ router = APIRouter(
 async def kw_search(
         kanban: str = Path(
             ...,
-            title = "Kanban Name"
+            title = "Kanban Name",
+            example = settings.ES_ALIAS
         ),
         query: str = Query(
             "hello world",
@@ -57,30 +57,38 @@ async def kw_search(
 
     return parse_kw_search(response)
 
-@router.get("/tag/{name}")
+@router.get("/tag/{kanban}")
 async def tag_search(
-        name: str = Path(
+        kanban: str = Path(
             ...,
-            title = "Tag Name"),
+            title = "Kanban Name",
+            example = settings.ES_ALIAS
+        ),
+        tag: str = Query(
+            "history",
+            description="Search will based on this tag to filter",
+            min_length=3,
+            max_length=200,
+        ),
         offset: Optional[int] = Query(0, ge = 0), 
-        limit: Optional[int] = Query(10, ge = 0, le = 50),
-        example = "history") -> List[Items]:
+        limit: Optional[int] = Query(10, ge = 0, le = 50)
+        ) -> List[Items]:
     """ """
     es = get_es_client()
-    search = Search(using = es, index = settings.ES_ALIAS)
-    search = search.filter('terms', tags = [name])
+    search = Search(using = es, index = kanban)
+    search = search.filter('terms', tags = [tag])
     search = search[offset: offset + limit]
     response = search.execute().to_dict()
 
     return parse_response_to_items(response)
 
-@router.get("/semantic")
+@router.get("/semantic/{kanban}")
 async def semantic_search():
     """ """
 
     return {"hello": "semantic"}
 
-@router.get("/qanda")
+@router.get("/qanda/{kanban}")
 async def qa_search():
     """ """
 

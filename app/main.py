@@ -12,7 +12,4 @@ app.include_router(recommend.router)
 
 @app.get("/")
 def root():
-    return {"message": "Hello World"}
-
-
-# uvicorn main:app --reload
+    return {"HWF": "Search Engine"}

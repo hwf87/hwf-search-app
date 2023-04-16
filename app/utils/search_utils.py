@@ -18,6 +18,13 @@ def parse_response_to_items(response: Dict[str, Any]) -> List[Items]:
 
     return list_of_format_items
 
+def parse_response_to_item_info(response: Dict[str, Any]) -> List[Items]:
+    """ """
+    item_info = [
+        meta["_source"] for meta in response["hits"]["hits"]
+    ]
+    return item_info
+
 def parse_aggregations(response: Dict[str, Any]) -> List[Dict]:
     """ """
     aggregations_result = response["aggregations"]["my_agg"]["buckets"]

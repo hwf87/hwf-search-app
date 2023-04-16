@@ -1,12 +1,11 @@
-from fastapi import APIRouter, Depends, Query, Path, Request, Body
+from typing import List, Optional
+from elasticsearch_dsl import Search
 from fastapi.encoders import jsonable_encoder
-from typing import List, Optional, Dict
-from pydantic import BaseModel
-from elasticsearch import Elasticsearch
-from elasticsearch_dsl import Search, Document, Text, Keyword, Date 
+from fastapi import APIRouter, Query, Path, Body, Depends
+
+from config import settings
 from db.elastic import get_es_client
 from dependency import get_token_header
-from config import settings
 from api.schemas.schema import Items, KanbanSchema
 from utils.search_utils import parse_response_to_items
 
@@ -40,7 +39,7 @@ async def get_items_from_kanban(
     """
     es = get_es_client()
     search = Search(using=es, index=kanban_name)
-    search = search.sort({"posted": {"order": "desc"}})
+    search = search.sort({"posted": {"order": orderby}})
     search = search[offset : offset + limit]
     response = search.execute().to_dict()
 
@@ -48,7 +47,7 @@ async def get_items_from_kanban(
 
 @router.post("/{kanban_name}")
 async def create_new_kanban(
-        schema: Dict = Body(
+        schema: KanbanSchema = Body(
             ...,
             example = {
                 "aliases": {"alias_name": {}},
@@ -66,6 +65,7 @@ async def create_new_kanban(
         )):
     """ """
     es = get_es_client()
+    schema = jsonable_encoder(schema)
     res = es.indices.create(index=kanban_name, body=schema)
 
     return {
