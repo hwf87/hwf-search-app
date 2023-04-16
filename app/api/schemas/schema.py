@@ -11,10 +11,12 @@ class Items(BaseModel):
     link: str
     highlight: Optional[Dict]
 
+
 class HouzzItems(Items):
     author: str
     related_tags: List[str]
     description: str
+
 
 class CnnItems(Items):
     channel: str
@@ -22,23 +24,28 @@ class CnnItems(Items):
     likes: str
     views: str
 
+
 class TedtalkItems(Items):
     author: str
     views: str
 
+
 class AggregationObj(BaseModel):
     key: str
     doc_count: int
+
 
 class SuggestionObj(BaseModel):
     text: str
     score: float
     freq: int
 
+
 class KwSearch(BaseModel):
     items: List[Items]
     aggregations: List[AggregationObj]
     suggestions: List[SuggestionObj]
+
 
 class KanbanSchema(BaseModel):
     aliases: Optional[Dict]
