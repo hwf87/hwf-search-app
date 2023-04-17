@@ -18,7 +18,7 @@ router = APIRouter(
 
 @router.get("/{item_id}")
 async def get_item_info(
-    item_id: str = Path(..., description="Item ID", example=125970555),
+    item_id: str = Path(..., description="Item ID", example="125970555"),
     kanban: Optional[str] = Query(settings.ES_ALIAS, title="Kanban Name"),
 ):
     """ """
