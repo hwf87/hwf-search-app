@@ -1,118 +1,64 @@
 import requests
 import streamlit as st
-import pandas as pd
 
-# 定義假的資料集
-data = {
-    'Product': ['Product A', 'Product B', 'Product C', 'Product D'],
-    'Price': [10, 20, 30, 40],
-    'Rating': [3.5, 4.2, 2.7, 4.5],
-    'Description': ['Description A', 'Description B', 'Description C', 'Description D']
-}
-
-df = pd.DataFrame(data)
+with open('./style.css') as f:
+    css = f.read()
+    st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
 
 if "should_search" not in st.session_state:
     st.session_state.should_search = False
 
-def load_css() -> str:
-    """ Return all css styles. """
-    common_tag_css = """
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                padding: .15rem .40rem;
-                position: relative;
-                text-decoration: none;
-                font-size: 95%;
-                border-radius: 5px;
-                margin-right: .5rem;
-                margin-top: .4rem;
-                margin-bottom: .5rem;
-    """
-    return f"""
-        <style>
-            #tags {{
-                {common_tag_css}
-                color: rgb(88, 88, 88);
-                border-width: 0px;
-                background-color: rgb(240, 242, 246);
-            }}
-            #tags:hover {{
-                color: black;
-                box-shadow: 0px 5px 10px 0px rgba(0,0,0,0.2);
-            }}
-            #active-tag {{
-                {common_tag_css}
-                color: rgb(246, 51, 102);
-                border-width: 1px;
-                border-style: solid;
-                border-color: rgb(246, 51, 102);
-            }}
-            #active-tag:hover {{
-                color: black;
-                border-color: black;
-                background-color: rgb(240, 242, 246);
-                box-shadow: 0px 5px 10px 0px rgba(0,0,0,0.2);
-            }}
-        </style>
-    """
+def card(uid: str, title: str, details: str, posted: str, tags: str, link: str, highlight: str):
+    limit, tag_html_str = 5, ""
+    for tag in tags[:limit]:
+        tag_html_str += f"""<span class="tag">{tag}</span>"""
 
-url = "http://localhost:8501/#product-search"
-title = "Hello"
-author = "James"
-length = "100"
-highlights = "YA Ya Ya"
+    if "youtube.com" in link:
+        demo_html_str = f"""<iframe width="100%" src="https://www.youtube.com/embed/{uid}" frameborder="0" allowfullscreen></iframe>"""
+    elif "ted.com" in link:
+        demo_html_str = f"""<iframe width="100%" src="https://embed.ted.com/talks/lang/en/{uid}" frameborder="0" allowfullscreen></iframe>"""
+    elif "houzz.com" in link:
+        demo_html_str = f"""<img src="https://st.hzcdn.com/fimgs/2a91b52a03b73b7d_2749-w458-h268-b0-p0--.jpg">"""
+    else:
+        demo_html_str = f"""<img src="https://st.hzcdn.com/fimgs/2a91b52a03b73b7d_2749-w458-h268-b0-p0--.jpg">"""
 
-tmp = f"""
-        <div style="font-size:120%;">
-            {1 + 1}.
-            <a href="{url}">
-                {title}
-            </a>
+    # <img src="https://st.hzcdn.com/fimgs/2a91b52a03b73b7d_2749-w458-h268-b0-p0--.jpg">
+    # <iframe width="100%" src="https://www.youtube.com/embed/aGXNkUQf56g" frameborder="0" allowfullscreen></iframe>
+    html_str = f"""
+    <div class="card">
+        <div class="card-image">
+            {demo_html_str}
         </div>
-        <div style="font-size:95%;">
-            <div style="color:grey;font-size:95%;">
-                {url[:90] + '...' if len(url) > 100 else url}
+        <div class="card-content">
+            <h5 class="card-title"><a href={link}>{title}</a></h5>
+            <p class="card-time">{posted}</p>      
+            <p class="card-summary">{(highlight+"..."+details)[:300]}...</p>
+            <div class="card-tags">
+                {tag_html_str}
             </div>
-            <div style="float:left;font-style:italic;">
-                {author} ·&nbsp;
-            </div>
-            <div style="color:grey;float:left;">
-                {length} ...
-            </div>
-            {highlights}
         </div>
+    </div>
     """
 
-def youtube_card(title, video_id, text, image, preview_url):
     st.write(
-        f"""
-        <div style="background-color:#F5F5F5;border-radius:10px;padding:10px;margin:10px">
-            <h2>{title}</h2>
-            <h4>{video_id}</h4>
-            <p>{text}</p>
-            <img src="{image}" alt="{title}" style="width:100%;border-radius:10px;">
-            <iframe src="{preview_url}" width="100%" height="400"></iframe>
-            <iframe width="100%" height="315" src="https://www.youtube.com/embed/{video_id}" frameborder="0" allowfullscreen></iframe>
-        </div>
-        """,
-        unsafe_allow_html=True,
+        html_str,
+        unsafe_allow_html=True
     )
 
-def houzz_card(title, video_id, text, image, preview_url):
-    st.write(
-        f"""
-        <div style="background-color:#F5F5F5;border-radius:10px;padding:10px;margin:10px">
-            <h2>{title}</h2>
-            <h4>{video_id}</h4>
-            <p>{text}</p>
-            <iframe width="100%" height="315" src="https://embed.ted.com/talks/lang/en/{video_id}" frameborder="0" allowfullscreen></iframe>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+def popular_tags(tags: list):
+    limit, tag_html_str = 9, ""
+    for tag in tags[:limit]:
+        tag_html_str += f"""<span class="tag">{tag}</span>"""
 
+    html_str = f"""
+    <div class="card-tags">
+        {tag_html_str}
+    </div>
+    """
+    st.write(
+        html_str,
+        unsafe_allow_html=True
+    )
 
 # 定義搜尋和排序功能
 def search_and_sort(df, query, sort_by):
@@ -120,35 +66,38 @@ def search_and_sort(df, query, sort_by):
     results = results.sort_values(by=sort_by, ascending=False)
     return results
 
-# 定義應用程序的外觀
-st.set_page_config(page_title="Product Search and Sort", page_icon=":mag:", layout="wide")
-
 # 定義分頁
-tabs = ['Search', 'Sort']
+tabs = ['Main Page', 'Kanban: News', 'Kanban: House', 'Kanban: Talks']
 tab = st.sidebar.radio('Select a tab', tabs)
 
 # 如果用戶選擇了搜尋分頁，則顯示搜尋框和結果
-st.write(load_css(), unsafe_allow_html=True)
-if tab == 'Search':
+if tab == 'Main Page':
     st.header("Product Search")
     search_term = st.text_input("Enter a product name to search")
     if search_term:
         st.session_state.should_search = True
 
     if st.session_state.should_search:
-        res = requests.get(f"http://127.0.0.1:8000/search/hwf?query={search_term}&offset=0&limit=2").json()
-        st.write(res, unsafe_allow_html=True)
+        res = requests.get(f"http://127.0.0.1:8000/search/hwf_1?query={search_term}&offset=0&limit=20").json()
+        items, aggregations, suggestions = res["items"], res["aggregations"], res["suggestions"]
+        tags = [agg["key"] for agg in aggregations]
+        suggests = [sug["text"] for sug in suggestions]
+        popular_tags(tags)
+
+        for body in items:
+            title, uid, details, link, posted, tags, highlight = body["title"], body["uid"], body["details"], body["link"], \
+                                                                body["posted"], body["tags"], body["highlight"]
+            highlight = "...".join(highlight.get("details", ""))
+            card(uid, title, details, posted, tags, link, highlight)
+
+        # st.write(res, unsafe_allow_html=True)
     else:
-        res = requests.get(f"http://127.0.0.1:8000/kanbans/tedtalk_1/items?orderby=desc&offset=0&limit=10").json()
+        res = requests.get(f"http://127.0.0.1:8000/kanbans/hwf_1/items?orderby=desc&offset=0&limit=10").json()
         for body in res:
-            # print(i)
-            # body = list(i.values())[0]
-            title = body["title"]
-            subtitle = body["uid"]
-            text = body["details"]
-            image = body["link"]
-            preview_url = "https://www.houzz.com/magazine/houzz-tour-office-building-becomes-a-designers-stylish-home-stsetivw-vs~158661016"
-            houzz_card(title, subtitle, text, image, preview_url)
+            title, uid, details, link, posted, tags, highlight = body["title"], body["uid"], body["details"], body["link"], \
+                                                                body["posted"], body["tags"], body["highlight"]
+            highlight = "...".join(highlight.get("details", ""))
+            card(uid, title, details, posted, tags, link, highlight)
         # st.write(res, unsafe_allow_html=True)
 
 
@@ -158,15 +107,4 @@ if tab == 'Search':
 
     # st.write(tmp, unsafe_allow_html=True)
 
-# 如果用戶選擇了排序分頁，則顯示排序框和結果
-if tab == 'Sort':
-    st.header("Product Sort")
-    sort_by = st.selectbox("Sort by", ['Price', 'Rating'])
-    results = search_and_sort(df, '', sort_by)
-    st.table(results)
-
-
 st.session_state.should_search = False
-
-# res = requests.get("http://127.0.0.1:8000/search/hwf?query=hello%20world&offset=0&limit=2")
-# print(res.json())

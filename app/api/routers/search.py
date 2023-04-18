@@ -42,7 +42,7 @@ async def kw_search(
         pre_tags="<strong>",
         post_tags="</strong>",
         fragment_size=50,
-        number_of_fragments=3,
+        number_of_fragments=5,
     )
     search = search[offset : offset + limit]
     search.aggs.bucket("my_agg", "terms", field="tags")
