@@ -1,13 +1,6 @@
 import requests
 import streamlit as st
 
-with open('./style.css') as f:
-    css = f.read()
-    st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
-
-if "should_search" not in st.session_state:
-    st.session_state.should_search = False
-
 def card(uid: str, title: str, details: str, posted: str, tags: str, link: str, highlight: str):
     limit, tag_html_str = 5, ""
     for tag in tags[:limit]:
@@ -48,7 +41,7 @@ def card(uid: str, title: str, details: str, posted: str, tags: str, link: str, 
 def popular_tags(tags: list):
     limit, tag_html_str = 9, ""
     for tag in tags[:limit]:
-        tag_html_str += f"""<span class="tag">{tag}</span>"""
+        tag_html_str += f"""<span class="tag" onclick="tag=Life">{tag}</span>"""
 
     html_str = f"""
     <div class="card-tags">
@@ -60,51 +53,40 @@ def popular_tags(tags: list):
         unsafe_allow_html=True
     )
 
-# 定義搜尋和排序功能
-def search_and_sort(df, query, sort_by):
-    results = df[df['Product'].str.contains(query)]
-    results = results.sort_values(by=sort_by, ascending=False)
-    return results
+def search(kanban: str):
+    """ """
+    st.header("Search")
+    search_term = st.text_input("Enter to search")
+    sort_by = st.selectbox('Sort by:', ('Relevance', 'Date'))
+    curr_page = st.selectbox('Pages:', (1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 
-# 定義分頁
-tabs = ['Main Page', 'Kanban: News', 'Kanban: House', 'Kanban: Talks']
-tab = st.sidebar.radio('Select a tab', tabs)
-
-# 如果用戶選擇了搜尋分頁，則顯示搜尋框和結果
-if tab == 'Main Page':
-    st.header("Product Search")
-    search_term = st.text_input("Enter a product name to search")
     if search_term:
         st.session_state.should_search = True
 
     if st.session_state.should_search:
-        res = requests.get(f"http://127.0.0.1:8000/search/hwf_1?query={search_term}&offset=0&limit=20").json()
+        if curr_page:
+            offset = (curr_page-1) * 10
+            res = requests.get(f"http://127.0.0.1:8000/search/{kanban}?query={search_term}&offset={offset}&limit=10").json()
         items, aggregations, suggestions = res["items"], res["aggregations"], res["suggestions"]
         tags = [agg["key"] for agg in aggregations]
-        suggests = [sug["text"] for sug in suggestions]
+        # suggests = [sug["text"] for sug in suggestions]
         popular_tags(tags)
 
+        if sort_by == "Date":
+            items.reverse()     
         for body in items:
             title, uid, details, link, posted, tags, highlight = body["title"], body["uid"], body["details"], body["link"], \
                                                                 body["posted"], body["tags"], body["highlight"]
             highlight = "...".join(highlight.get("details", ""))
             card(uid, title, details, posted, tags, link, highlight)
-
-        # st.write(res, unsafe_allow_html=True)
     else:
-        res = requests.get(f"http://127.0.0.1:8000/kanbans/hwf_1/items?orderby=desc&offset=0&limit=10").json()
+        if curr_page:
+            offset = (curr_page-1) * 10
+            res = requests.get(f"http://127.0.0.1:8000/kanbans/{kanban}/items?orderby=desc&offset={offset}&limit=10").json()
+        if sort_by == "Date":
+            res.reverse()
         for body in res:
             title, uid, details, link, posted, tags, highlight = body["title"], body["uid"], body["details"], body["link"], \
                                                                 body["posted"], body["tags"], body["highlight"]
             highlight = "...".join(highlight.get("details", ""))
             card(uid, title, details, posted, tags, link, highlight)
-        # st.write(res, unsafe_allow_html=True)
-
-
-    # results = search_and_sort(df, query, 'Rating')
-    # st.table(results)
-    
-
-    # st.write(tmp, unsafe_allow_html=True)
-
-st.session_state.should_search = False
