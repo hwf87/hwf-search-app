@@ -1,14 +1,16 @@
 import requests
 import streamlit as st
 
+
 class Tools:
     def __init__(self) -> None:
-        self.path = './style.css'
+        self.path = "./style.css"
 
     def load_css(self):
         with open(self.path) as f:
             css = f.read()
-            st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
+            st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+
 
 class UiSearch:
     def __init__(self, kanban: str) -> None:
@@ -16,7 +18,16 @@ class UiSearch:
         self.kanban = kanban
         self.api_base_url = "http://127.0.0.1:8000"
 
-    def card(self, uid: str, title: str, details: str, posted: str, tags: str, link: str, highlight: str):
+    def card(
+        self,
+        uid: str,
+        title: str,
+        details: str,
+        posted: str,
+        tags: str,
+        link: str,
+        highlight: str,
+    ) -> None:
         limit, tag_html_str = 5, ""
         for tag in tags[:limit]:
             tag_html_str += f"""<span class="tag">{tag}</span>"""
@@ -48,12 +59,9 @@ class UiSearch:
         </div>
         """
 
-        st.write(
-            html_str,
-            unsafe_allow_html=True
-        )
+        st.write(html_str, unsafe_allow_html=True)
 
-    def popular_tags(self, tags: list):
+    def popular_tags(self, tags: list) -> None:
         limit, tag_html_str = 9, ""
         for tag in tags[:limit]:
             tag_html_str += f"""<span class="tag" onclick="tag=Life">{tag}</span>"""
@@ -63,45 +71,64 @@ class UiSearch:
             {tag_html_str}
         </div>
         """
-        st.write(
-            html_str,
-            unsafe_allow_html=True
-        )
+        st.write(html_str, unsafe_allow_html=True)
 
-    def search(self):
+    def search(self) -> None:
         """ """
         st.header("Search")
         search_term = st.text_input("Enter to search")
-        sort_by = st.selectbox('Sort by:', ('Relevance', 'Date'))
-        curr_page = st.selectbox('Pages:', (1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+        sort_by = st.selectbox("Sort by:", ("Relevance", "Date"))
+        curr_page = st.selectbox("Pages:", (1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 
         if search_term:
             st.session_state.should_search = True
 
         if st.session_state.should_search:
             if curr_page:
-                offset = (curr_page-1) * 10
-                res = requests.get(f"{self.api_base_url}/search/{self.kanban}?query={search_term}&offset={offset}&limit=10").json()
-            items, aggregations, suggestions = res["items"], res["aggregations"], res["suggestions"]
+                offset = (curr_page - 1) * 10
+                res = requests.get(
+                    f"{self.api_base_url}/search/{self.kanban}?query={search_term}&offset={offset}&limit=10"
+                ).json()
+            items, aggregations, suggestions = (
+                res["items"],
+                res["aggregations"],
+                res["suggestions"],
+            )
             tags = [agg["key"] for agg in aggregations]
             # suggests = [sug["text"] for sug in suggestions]
             self.popular_tags(tags)
 
             if sort_by == "Date":
-                items.reverse()     
+                items.reverse()
             for body in items:
-                title, uid, details, link, posted, tags, highlight = body["title"], body["uid"], body["details"], body["link"], \
-                                                                    body["posted"], body["tags"], body["highlight"]
+                title, uid, details, link, posted, tags, highlight = (
+                    body["title"],
+                    body["uid"],
+                    body["details"],
+                    body["link"],
+                    body["posted"],
+                    body["tags"],
+                    body["highlight"],
+                )
                 highlight = "...".join(highlight.get("details", ""))
                 self.card(uid, title, details, posted, tags, link, highlight)
         else:
             if curr_page:
-                offset = (curr_page-1) * 10
-                res = requests.get(f"{self.api_base_url}/kanbans/{self.kanban}/items?orderby=desc&offset={offset}&limit=10").json()
+                offset = (curr_page - 1) * 10
+                res = requests.get(
+                    f"{self.api_base_url}/kanbans/{self.kanban}/items?orderby=desc&offset={offset}&limit=10"
+                ).json()
             if sort_by == "Date":
                 res.reverse()
             for body in res:
-                title, uid, details, link, posted, tags, highlight = body["title"], body["uid"], body["details"], body["link"], \
-                                                                    body["posted"], body["tags"], body["highlight"]
+                title, uid, details, link, posted, tags, highlight = (
+                    body["title"],
+                    body["uid"],
+                    body["details"],
+                    body["link"],
+                    body["posted"],
+                    body["tags"],
+                    body["highlight"],
+                )
                 highlight = "...".join(highlight.get("details", ""))
                 self.card(uid, title, details, posted, tags, link, highlight)

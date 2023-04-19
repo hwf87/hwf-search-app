@@ -5,6 +5,6 @@ if __name__ == "__main__":
     Tools().load_css()
     if "should_search" not in st.session_state:
         st.session_state.should_search = False
-    ui = UiSearch(kanban = "houzz_1")
+    ui = UiSearch(kanban="houzz_1")
     ui.search()
     st.session_state.should_search = False
