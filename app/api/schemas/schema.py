@@ -9,6 +9,7 @@ class Items(BaseModel):
     posted: str
     tags: List[str]
     link: str
+    images: Optional[str]
     highlight: Optional[Dict]
 
 

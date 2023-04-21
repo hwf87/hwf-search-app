@@ -12,6 +12,7 @@ def parse_response_to_items(response: Dict[str, Any]) -> List[Items]:
             "tags": meta["_source"].get("tags", []),
             "posted": meta["_source"].get("posted", ""),
             "link": meta["_source"].get("link", ""),
+            "images": meta["_source"].get("images", ""),
             "highlight": meta.get("highlight", {}),
         }
         for meta in response["hits"]["hits"]

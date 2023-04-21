@@ -26,23 +26,25 @@ class UiSearch:
         posted: str,
         tags: str,
         link: str,
+        images: str,
         highlight: str,
     ) -> None:
         limit, tag_html_str = 5, ""
         for tag in tags[:limit]:
             tag_html_str += f"""<span class="tag">{tag}</span>"""
+        
+        if images == "":
+            images = "https://st.hzcdn.com/fimgs/2a91b52a03b73b7d_2749-w458-h268-b0-p0--.jpg"
 
         if "youtube.com" in link:
             demo_html_str = f"""<iframe width="100%" src="https://www.youtube.com/embed/{uid}" frameborder="0" allowfullscreen></iframe>"""
         elif "ted.com" in link:
             demo_html_str = f"""<iframe width="100%" src="https://embed.ted.com/talks/lang/en/{uid}" frameborder="0" allowfullscreen></iframe>"""
         elif "houzz.com" in link:
-            demo_html_str = f"""<img src="https://st.hzcdn.com/fimgs/2a91b52a03b73b7d_2749-w458-h268-b0-p0--.jpg">"""
+            demo_html_str = f"""<img src={images}>"""
         else:
-            demo_html_str = f"""<img src="https://st.hzcdn.com/fimgs/2a91b52a03b73b7d_2749-w458-h268-b0-p0--.jpg">"""
+            demo_html_str = f"""<img src={images}>"""
 
-        # <img src="https://st.hzcdn.com/fimgs/2a91b52a03b73b7d_2749-w458-h268-b0-p0--.jpg">
-        # <iframe width="100%" src="https://www.youtube.com/embed/aGXNkUQf56g" frameborder="0" allowfullscreen></iframe>
         html_str = f"""
         <div class="card">
             <div class="card-image">
@@ -99,19 +101,21 @@ class UiSearch:
             self.popular_tags(tags)
 
             if sort_by == "Date":
-                items.reverse()
+                items = sorted(items, key=lambda k: k.get('posted', '1991-01-01'), reverse=True)
             for body in items:
-                title, uid, details, link, posted, tags, highlight = (
+                title, uid, details, link, posted, tags, images, highlight = (
                     body["title"],
                     body["uid"],
                     body["details"],
                     body["link"],
                     body["posted"],
                     body["tags"],
+                    body["images"],
                     body["highlight"],
                 )
+                tags = ["none"] if tags == [] else tags
                 highlight = "...".join(highlight.get("details", ""))
-                self.card(uid, title, details, posted, tags, link, highlight)
+                self.card(uid, title, details, posted, tags, link, images, highlight)
         else:
             if curr_page:
                 offset = (curr_page - 1) * 10
@@ -121,14 +125,16 @@ class UiSearch:
             if sort_by == "Date":
                 res.reverse()
             for body in res:
-                title, uid, details, link, posted, tags, highlight = (
+                title, uid, details, link, posted, tags, images, highlight = (
                     body["title"],
                     body["uid"],
                     body["details"],
                     body["link"],
                     body["posted"],
                     body["tags"],
+                    body["images"],
                     body["highlight"],
                 )
+                tags = ["none"] if tags == [] else tags
                 highlight = "...".join(highlight.get("details", ""))
-                self.card(uid, title, details, posted, tags, link, highlight)
+                self.card(uid, title, details, posted, tags, link, images, highlight)
