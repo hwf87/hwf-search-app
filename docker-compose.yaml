@@ -2,20 +2,24 @@ version: "3.0"
 services:
   backend:
     container_name: search_backend
-    image: ...
+    build: 
+      context: ./
+      dockerfile: Backend.Dockerfile
     networks:
-      - elastic
+      - elk_elastic
     ports:
-      - 5601:5601
-  frontend:
-    container_name: search_frontend
-    image: ...
-    networks:
-      - elastic
-    depends_on:
-      - backend
-    ports:
-      - 9200:9200
+      - 8003:8000
+  # frontend:
+  #   container_name: search_frontend
+  #   build: 
+  #     context: ./
+  #     dockerfile: Backend.Dockerfile
+  #   networks:
+  #     - elk_elastic
+  #   depends_on:
+  #     - backend
+  #   ports:
+  #     - 8502:8501
 networks:
-  elastic:
-    driver: bridge
+  elk_elastic:
+    external: true
