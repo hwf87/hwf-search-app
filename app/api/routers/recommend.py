@@ -30,7 +30,10 @@ async def by_user(
         description="Search will based on this query string",
         min_length=3,
         max_length=200,
-    )) -> List[Items]:
+    ),
+    offset: Optional[int] = Query(0, ge=0),
+    limit: Optional[int] = Query(10, ge=0, le=100),
+) -> List[Items]:
     """ """
     es = get_es_client()
     search = Search(using=es, index=settings.ES_ALIAS)
@@ -53,6 +56,7 @@ async def by_user(
         }
     }
     search.update_from_dict(body)
+    search = search[offset : offset + limit]
     response = search.execute().to_dict()
 
     return parse_response_to_items(response)

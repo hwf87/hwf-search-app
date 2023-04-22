@@ -138,3 +138,25 @@ class UiSearch:
                 tags = ["none"] if tags == [] else tags
                 highlight = "...".join(highlight.get("details", ""))
                 self.card(uid, title, details, posted, tags, link, images, highlight)
+
+    def recommend(self) -> None:
+        """ """
+        st.header("Ask a Question")
+        input_question = st.text_input("Enter to search")
+        if input_question:
+            res = requests.get(f"{self.api_base_url}/recommend/by/user_query?q={input_question}&offset=0&limit=30").json()
+            for body in res:
+                title, uid, details, link, posted, tags, images, highlight = (
+                    body["title"],
+                    body["uid"],
+                    body["details"],
+                    body["link"],
+                    body["posted"],
+                    body["tags"],
+                    body["images"],
+                    body["highlight"],
+                )
+                tags = ["none"] if tags == [] else tags
+                highlight = "...".join(highlight.get("details", ""))
+                self.card(uid, title, details, posted, tags, link, images, highlight)
+
