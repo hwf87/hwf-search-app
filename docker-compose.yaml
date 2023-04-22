@@ -1,0 +1,21 @@
+version: "3.0"
+services:
+  backend:
+    container_name: search_backend
+    image: ...
+    networks:
+      - elastic
+    ports:
+      - 5601:5601
+  frontend:
+    container_name: search_frontend
+    image: ...
+    networks:
+      - elastic
+    depends_on:
+      - backend
+    ports:
+      - 9200:9200
+networks:
+  elastic:
+    driver: bridge
