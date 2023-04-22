@@ -3,9 +3,7 @@ from fastapi import APIRouter, Depends, Query, Body
 from sentence_transformers import SentenceTransformer
 
 from dependency import get_token_header
-from config import settings
-
-model = SentenceTransformer(settings.PRE_TRAIN_MODEL)
+from utils.search_utils import infer_embeddings
 
 router = APIRouter(
     prefix="/inference",
@@ -25,8 +23,7 @@ async def get_sentence_embeddings(
     ),
 ) -> Dict[str, List[float]]:
     """ """
-    embeddings = model.encode(s)
-    embeddings = embeddings.tolist()
+    embeddings = infer_embeddings(s)
 
     return {"embeddings": embeddings}
 
@@ -39,7 +36,6 @@ async def get_multi_sentence_embeddings(
     ),
 ) -> Dict[str, List[List[float]]]:
     """ """
-    embeddings = model.encode(input_setences)
-    batch_embeddings = embeddings.tolist()
+    batch_embeddings = infer_embeddings(input_setences)
 
     return {"embeddings": batch_embeddings}

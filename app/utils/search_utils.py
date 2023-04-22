@@ -1,5 +1,15 @@
 from typing import List, Dict, Any
 from api.schemas.schema import Items
+from sentence_transformers import SentenceTransformer
+from config import settings
+model = SentenceTransformer(settings.PRE_TRAIN_MODEL)
+
+
+def infer_embeddings(input: List[str]) -> List:
+    """ """
+    embeddings = model.encode(input)
+    embeddings = embeddings.tolist()
+    return embeddings
 
 
 def parse_response_to_items(response: Dict[str, Any]) -> List[Items]:
