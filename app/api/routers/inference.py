@@ -31,8 +31,7 @@ async def get_sentence_embeddings(
 @router.post("/multi_sentence")
 async def get_multi_sentence_embeddings(
     input_setences: List[str] = Body(
-        ...,
-        example=["Hello world", "Thank gog is Friday!"]
+        ..., example=["Hello world", "Thank gog is Friday!"]
     ),
 ) -> Dict[str, List[List[float]]]:
     """ """

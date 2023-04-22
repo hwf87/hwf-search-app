@@ -43,17 +43,13 @@ async def by_user(
         "size": 10,
         "query": {
             "script_score": {
-                "query": {
-                    "match_all": {}
-                },
+                "query": {"match_all": {}},
                 "script": {
                     "source": "cosineSimilarity(params.embeddings, doc['embeddings']) + 1.0",
-                    "params": {
-                        "embeddings": embeddings
-                    }
-                }
+                    "params": {"embeddings": embeddings},
+                },
             }
-        }
+        },
     }
     search.update_from_dict(body)
     search = search[offset : offset + limit]

@@ -2,6 +2,7 @@ from typing import List, Dict, Any
 from api.schemas.schema import Items
 from sentence_transformers import SentenceTransformer
 from config import settings
+
 model = SentenceTransformer(settings.PRE_TRAIN_MODEL)
 
 

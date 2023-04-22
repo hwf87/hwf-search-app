@@ -17,7 +17,9 @@ class UiSearch:
     def __init__(self, kanban: str) -> None:
         """ """
         self.kanban = kanban
-        self.api_base_url = os.environ.get("API_BASE_URL", default="http://127.0.0.1:8000")
+        self.api_base_url = os.environ.get(
+            "API_BASE_URL", default="http://127.0.0.1:8000"
+        )
 
     def card(
         self,
@@ -33,9 +35,11 @@ class UiSearch:
         limit, tag_html_str = 5, ""
         for tag in tags[:limit]:
             tag_html_str += f"""<span class="tag">{tag}</span>"""
-        
+
         if images == "":
-            images = "https://st.hzcdn.com/fimgs/2a91b52a03b73b7d_2749-w458-h268-b0-p0--.jpg"
+            images = (
+                "https://st.hzcdn.com/fimgs/2a91b52a03b73b7d_2749-w458-h268-b0-p0--.jpg"
+            )
 
         if "youtube.com" in link:
             demo_html_str = f"""<iframe width="100%" src="https://www.youtube.com/embed/{uid}" frameborder="0" allowfullscreen></iframe>"""
@@ -102,7 +106,9 @@ class UiSearch:
             self.popular_tags(tags)
 
             if sort_by == "Date":
-                items = sorted(items, key=lambda k: k.get('posted', '1991-01-01'), reverse=True)
+                items = sorted(
+                    items, key=lambda k: k.get("posted", "1991-01-01"), reverse=True
+                )
             for body in items:
                 title, uid, details, link, posted, tags, images, highlight = (
                     body["title"],
@@ -145,7 +151,9 @@ class UiSearch:
         st.header("Ask a Question")
         input_question = st.text_input("Enter to search")
         if input_question:
-            res = requests.get(f"{self.api_base_url}/recommend/by/user_query?q={input_question}&offset=0&limit=30").json()
+            res = requests.get(
+                f"{self.api_base_url}/recommend/by/user_query?q={input_question}&offset=0&limit=30"
+            ).json()
             for body in res:
                 title, uid, details, link, posted, tags, images, highlight = (
                     body["title"],
@@ -160,4 +168,3 @@ class UiSearch:
                 tags = ["none"] if tags == [] else tags
                 highlight = "...".join(highlight.get("details", ""))
                 self.card(uid, title, details, posted, tags, link, images, highlight)
-
