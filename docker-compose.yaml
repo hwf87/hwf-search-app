@@ -9,17 +9,19 @@ services:
       - elk_elastic
     ports:
       - 8003:8000
-  # frontend:
-  #   container_name: search_frontend
-  #   build: 
-  #     context: ./
-  #     dockerfile: Backend.Dockerfile
-  #   networks:
-  #     - elk_elastic
-  #   depends_on:
-  #     - backend
-  #   ports:
-  #     - 8502:8501
+  frontend:
+    container_name: search_frontend
+    build: 
+      context: ./
+      dockerfile: Frontend.Dockerfile
+    environment:
+      - API_BASE_URL=http://search_backend:8000
+    networks:
+      - elk_elastic
+    depends_on:
+      - backend
+    ports:
+      - 8503:8501
 networks:
   elk_elastic:
     external: true

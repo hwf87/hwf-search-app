@@ -4,3 +4,4 @@ WORKDIR /app
 RUN pip install -U pip
 RUN pip install --timeout 600 -r requirements.txt
 CMD cd ./frontend && streamlit run HOME.py
+# --server.port 8501 --server.serverAddress='0.0.0.0'

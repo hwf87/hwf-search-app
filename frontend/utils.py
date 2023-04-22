@@ -1,3 +1,4 @@
+import os
 import requests
 import streamlit as st
 
@@ -16,7 +17,7 @@ class UiSearch:
     def __init__(self, kanban: str) -> None:
         """ """
         self.kanban = kanban
-        self.api_base_url = "http://127.0.0.1:8000"
+        self.api_base_url = os.environ.get("API_BASE_URL", default="http://127.0.0.1:8000")
 
     def card(
         self,
