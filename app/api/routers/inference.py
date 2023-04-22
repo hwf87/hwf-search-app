@@ -1,8 +1,6 @@
 from typing import List, Dict
-from fastapi import APIRouter, Depends, Query, Body
-from sentence_transformers import SentenceTransformer
+from fastapi import APIRouter, Query, Body
 
-from dependency import get_token_header
 from utils.search_utils import infer_embeddings
 
 router = APIRouter(

@@ -6,4 +6,4 @@ RUN pip install --timeout 600 -r requirements.txt
 CMD cd ./app && python main.py
 
 # docker build --tag search-backend -f Backend.Dockerfile .
-# docker run -p 8001:8000 search-backend 
+# docker run -p 8001:8000 search-backend

@@ -1,5 +1,6 @@
 import os
 import requests
+from typing import List
 import streamlit as st
 
 
@@ -57,7 +58,7 @@ class UiSearch:
             </div>
             <div class="card-content">
                 <h5 class="card-title"><a href={link}>{title}</a></h5>
-                <p class="card-time">{posted}</p>      
+                <p class="card-time">{posted}</p>
                 <p class="card-summary">{(highlight+"..."+details)[:300]}...</p>
                 <div class="card-tags">
                     {tag_html_str}
@@ -68,7 +69,7 @@ class UiSearch:
 
         st.write(html_str, unsafe_allow_html=True)
 
-    def popular_tags(self, tags: list) -> None:
+    def popular_tags(self, tags: List[str]) -> None:
         limit, tag_html_str = 9, ""
         for tag in tags[:limit]:
             tag_html_str += f"""<span class="tag" onclick="tag=Life">{tag}</span>"""
@@ -79,6 +80,17 @@ class UiSearch:
         </div>
         """
         st.write(html_str, unsafe_allow_html=True)
+
+    def suggest_terms(self, suggests: List[str]) -> None:
+        """ """
+        if suggests != []:
+            suggests_str = ", ".join(suggests)
+            suggest_body = f"""
+            <p class="card-summary">
+                Are you searching for: <br><strong>{suggests_str}</strong></br>
+            </p>
+            """
+            st.write(suggest_body, unsafe_allow_html=True)
 
     def search(self) -> None:
         """ """
@@ -102,7 +114,8 @@ class UiSearch:
                 res["suggestions"],
             )
             tags = [agg["key"] for agg in aggregations]
-            # suggests = [sug["text"] for sug in suggestions]
+            suggests = [sug["text"] for sug in suggestions]
+            self.suggest_terms(suggests)
             self.popular_tags(tags)
 
             if sort_by == "Date":

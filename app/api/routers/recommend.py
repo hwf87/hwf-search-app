@@ -1,9 +1,8 @@
 from typing import List, Optional
 from elasticsearch_dsl import Search
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Query
 
 from db.elastic import get_es_client
-from dependency import get_token_header
 from api.schemas.schema import Items
 from config import settings
 from utils.search_utils import infer_embeddings, parse_response_to_items
