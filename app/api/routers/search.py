@@ -14,6 +14,15 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+# import sys
+# import pathlib
+# new_path = str(pathlib.Path(sys.path[0]).parent.absolute())
+# print(new_path)
+# print(sys.path)
+# sys.path.append(new_path)
+
+# print(sys.path)
+
 
 @router.get("/{kanban}")
 async def kw_search(
