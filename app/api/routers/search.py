@@ -14,15 +14,6 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-# import sys
-# import pathlib
-# new_path = str(pathlib.Path(sys.path[0]).parent.absolute())
-# print(new_path)
-# print(sys.path)
-# sys.path.append(new_path)
-
-# print(sys.path)
-
 
 @router.get("/{kanban}")
 async def kw_search(
@@ -73,10 +64,18 @@ async def tag_search(
 ) -> List[Items]:
     """ """
     es = get_es_client()
-    search = Search(using=es, index=kanban)
-    search = search.filter("terms", tags=[tag])
-    search = search[offset : offset + limit]
-    response = search.execute().to_dict()
+    # search = Search(using=es, index=kanban)
+    # search = search.filter("terms", tags=[tag])
+    # search = search[offset : offset + limit]
+    # response = search.execute().to_dict()
+
+    query_body = {
+        "query": {"bool": {"filter": {"term": {"tags": tag}}}},
+        "from": offset,
+        "size": limit,
+    }
+    response = es.search(index=kanban, body=query_body)
+    response = dict(response)
 
     return parse_response_to_items(response)
 

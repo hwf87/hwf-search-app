@@ -1,23 +1,36 @@
 import pytest
-from typing import Iterator, Mapping, Union
+from typing import Iterator, Mapping, Union, List
 from elasticmock import elasticmock
 import elasticsearch
 from elasticsearch import Elasticsearch, helpers
 import pandas as pd
 import json
+import asyncio
 
-from app.api.routers.search import tag_search
+from fastapi.testclient import TestClient
+
 
 import sys
 
+sys.path[0] = sys.path[0] + "/app"
 print(sys.path)
+
+from api.routers.search import tag_search
+from config import settings
+from main import app
+
+client = TestClient(app)
+
+
+print(client)
+
+print(settings.ES_HOST)
 
 
 class FooService:
     def __init__(self):
         self.es = elasticsearch.Elasticsearch(
             "http://127.0.0.1:9200",
-            http_auth=("elastic", "elastic"),
             verify_certs=False,
             timeout=30,
             max_retries=10,
@@ -64,8 +77,30 @@ def read_json_data(path: str) -> json:
     return my_json_list
 
 
+# @elasticmock
+# def test_123():
+#     """ """
+#     FS = FooService()
+#     my_json_list = read_json_data(path="./test/mock_data/houzz_data_mock.json")
+#     if True:
+#         FS.bulk_insert(
+#             actions=FS.load_action_batch(
+#                 op_type="index",
+#                 index_name="test_houzz",
+#                 documents=my_json_list,
+#             ),
+#             es=FS.es,
+#         )
+
+#     assert 1 == 1
+
+
 @elasticmock
-def test_tag_search():
+@pytest.mark.parametrize(
+    "tag, expect",
+    [("Kitchen Design", {"165919486", "128839992", "122561609", "80583370"})],
+)
+def test_tag_search(tag: str, expect: set):
     """ """
     FS = FooService()
     my_json_list = read_json_data(path="./test/mock_data/houzz_data_mock.json")
@@ -78,5 +113,9 @@ def test_tag_search():
             ),
             es=FS.es,
         )
+    response = client.get(f"/search/tag/test_houzz?tag={tag}&offset=0&limit=10")
+    response = response.json()
+    answer = set([item["uid"] for item in response])
+    # expect = set(["165919486", "128839992", "122561609", "80583370"])
 
-    assert 1 == 1
+    assert answer == set(expect)

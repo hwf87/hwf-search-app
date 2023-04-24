@@ -1,8 +1,10 @@
 fastapi==0.95.0
 uvicorn==0.21.1
+httpx==0.24.0
 python-dotenv==1.0.0
 elasticsearch==7.17.9
 elasticsearch-dsl==7.4.1
+ElasticMock==1.8.1
 streamlit==1.21.0
 scipy==1.8.1
 torch==1.13.0
