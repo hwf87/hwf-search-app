@@ -1,9 +1,8 @@
 from typing import List, Optional
 from elasticsearch_dsl import Search
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Query
 
 from db.elastic import get_es_client
-from dependency import get_token_header
 from api.schemas.schema import Items
 from config import settings
 from utils.search_utils import infer_embeddings, parse_response_to_items
@@ -18,13 +17,13 @@ router = APIRouter(
 
 
 @router.get("/by/product")
-async def by_product():
+async def recommend_by_product():
     """ """
     return {"hello": "recommend by product"}
 
 
 @router.get("/by/user_query")
-async def by_user(
+async def recommend_by_user(
     q: str = Query(
         "hello world",
         description="Search will based on this query string",
@@ -43,17 +42,13 @@ async def by_user(
         "size": 10,
         "query": {
             "script_score": {
-                "query": {
-                    "match_all": {}
-                },
+                "query": {"match_all": {}},
                 "script": {
                     "source": "cosineSimilarity(params.embeddings, doc['embeddings']) + 1.0",
-                    "params": {
-                        "embeddings": embeddings
-                    }
-                }
+                    "params": {"embeddings": embeddings},
+                },
             }
-        }
+        },
     }
     search.update_from_dict(body)
     search = search[offset : offset + limit]

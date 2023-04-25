@@ -2,7 +2,7 @@ version: "3.0"
 services:
   backend:
     container_name: search_backend
-    build: 
+    build:
       context: ./
       dockerfile: Backend.Dockerfile
     networks:
@@ -11,7 +11,7 @@ services:
       - 8003:8000
   frontend:
     container_name: search_frontend
-    build: 
+    build:
       context: ./
       dockerfile: Frontend.Dockerfile
     environment:

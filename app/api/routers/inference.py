@@ -1,8 +1,6 @@
 from typing import List, Dict
-from fastapi import APIRouter, Depends, Query, Body
-from sentence_transformers import SentenceTransformer
+from fastapi import APIRouter, Query, Body
 
-from dependency import get_token_header
 from utils.search_utils import infer_embeddings
 
 router = APIRouter(
@@ -31,8 +29,7 @@ async def get_sentence_embeddings(
 @router.post("/multi_sentence")
 async def get_multi_sentence_embeddings(
     input_setences: List[str] = Body(
-        ...,
-        example=["Hello world", "Thank gog is Friday!"]
+        ..., example=["Hello world", "Thank gog is Friday!"]
     ),
 ) -> Dict[str, List[List[float]]]:
     """ """

@@ -1,11 +1,10 @@
 from typing import List, Optional
 from elasticsearch_dsl import Search
 from fastapi.encoders import jsonable_encoder
-from fastapi import APIRouter, Query, Path, Body, Depends
+from fastapi import APIRouter, Query, Path, Body
 
 from config import settings
 from db.elastic import get_es_client
-from dependency import get_token_header
 from api.schemas.schema import Items, KanbanSchema
 from utils.search_utils import parse_response_to_items
 

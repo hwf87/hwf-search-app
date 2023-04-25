@@ -1,10 +1,9 @@
 from typing import Optional
 from elasticsearch_dsl import Search
-from fastapi import APIRouter, Query, Path, Depends
+from fastapi import APIRouter, Query, Path
 
 from config import settings
 from db.elastic import get_es_client
-from dependency import get_token_header
 from utils.search_utils import parse_response_to_item_info
 
 
