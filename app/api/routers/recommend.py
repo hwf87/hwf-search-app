@@ -17,13 +17,13 @@ router = APIRouter(
 
 
 @router.get("/by/product")
-async def by_product():
+async def recommend_by_product():
     """ """
     return {"hello": "recommend by product"}
 
 
 @router.get("/by/user_query")
-async def by_user(
+async def recommend_by_user(
     q: str = Query(
         "hello world",
         description="Search will based on this query string",
