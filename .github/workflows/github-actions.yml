@@ -1,0 +1,20 @@
+name: CI/CD PIPELINE
+run-name: ${{ github.actor }} is running CI/CD on GitHub Actions 🚀
+on: [push]
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Pre-Commit Check
+        run: |
+          pre-commit install --install-hooks
+          pre-commit run --all-files

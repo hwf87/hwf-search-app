@@ -1,5 +1,6 @@
 import os
 import requests
+from typing import List
 import streamlit as st
 
 
@@ -17,7 +18,9 @@ class UiSearch:
     def __init__(self, kanban: str) -> None:
         """ """
         self.kanban = kanban
-        self.api_base_url = os.environ.get("API_BASE_URL", default="http://127.0.0.1:8000")
+        self.api_base_url = os.environ.get(
+            "API_BASE_URL", default="http://127.0.0.1:8000"
+        )
 
     def card(
         self,
@@ -33,9 +36,11 @@ class UiSearch:
         limit, tag_html_str = 5, ""
         for tag in tags[:limit]:
             tag_html_str += f"""<span class="tag">{tag}</span>"""
-        
+
         if images == "":
-            images = "https://st.hzcdn.com/fimgs/2a91b52a03b73b7d_2749-w458-h268-b0-p0--.jpg"
+            images = (
+                "https://st.hzcdn.com/fimgs/2a91b52a03b73b7d_2749-w458-h268-b0-p0--.jpg"
+            )
 
         if "youtube.com" in link:
             demo_html_str = f"""<iframe width="100%" src="https://www.youtube.com/embed/{uid}" frameborder="0" allowfullscreen></iframe>"""
@@ -53,7 +58,7 @@ class UiSearch:
             </div>
             <div class="card-content">
                 <h5 class="card-title"><a href={link}>{title}</a></h5>
-                <p class="card-time">{posted}</p>      
+                <p class="card-time">{posted}</p>
                 <p class="card-summary">{(highlight+"..."+details)[:300]}...</p>
                 <div class="card-tags">
                     {tag_html_str}
@@ -64,7 +69,7 @@ class UiSearch:
 
         st.write(html_str, unsafe_allow_html=True)
 
-    def popular_tags(self, tags: list) -> None:
+    def popular_tags(self, tags: List[str]) -> None:
         limit, tag_html_str = 9, ""
         for tag in tags[:limit]:
             tag_html_str += f"""<span class="tag" onclick="tag=Life">{tag}</span>"""
@@ -75,6 +80,17 @@ class UiSearch:
         </div>
         """
         st.write(html_str, unsafe_allow_html=True)
+
+    def suggest_terms(self, suggests: List[str]) -> None:
+        """ """
+        if suggests != []:
+            suggests_str = ", ".join(suggests)
+            suggest_body = f"""
+            <p class="card-summary">
+                Are you searching for: <br><strong>{suggests_str}</strong></br>
+            </p>
+            """
+            st.write(suggest_body, unsafe_allow_html=True)
 
     def search(self) -> None:
         """ """
@@ -98,11 +114,14 @@ class UiSearch:
                 res["suggestions"],
             )
             tags = [agg["key"] for agg in aggregations]
-            # suggests = [sug["text"] for sug in suggestions]
+            suggests = [sug["text"] for sug in suggestions]
+            self.suggest_terms(suggests)
             self.popular_tags(tags)
 
             if sort_by == "Date":
-                items = sorted(items, key=lambda k: k.get('posted', '1991-01-01'), reverse=True)
+                items = sorted(
+                    items, key=lambda k: k.get("posted", "1991-01-01"), reverse=True
+                )
             for body in items:
                 title, uid, details, link, posted, tags, images, highlight = (
                     body["title"],
@@ -145,7 +164,9 @@ class UiSearch:
         st.header("Ask a Question")
         input_question = st.text_input("Enter to search")
         if input_question:
-            res = requests.get(f"{self.api_base_url}/recommend/by/user_query?q={input_question}&offset=0&limit=30").json()
+            res = requests.get(
+                f"{self.api_base_url}/recommend/by/user_query?q={input_question}&offset=0&limit=30"
+            ).json()
             for body in res:
                 title, uid, details, link, posted, tags, images, highlight = (
                     body["title"],
@@ -160,4 +181,3 @@ class UiSearch:
                 tags = ["none"] if tags == [] else tags
                 highlight = "...".join(highlight.get("details", ""))
                 self.card(uid, title, details, posted, tags, link, images, highlight)
-

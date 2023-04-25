@@ -1,0 +1,43 @@
+{
+  "aliases" : {
+    "hwf" : { }
+  },
+  "mappings" : {
+    "properties" : {
+      "author" : {
+        "type" : "keyword"
+      },
+      "description" : {
+        "type" : "text"
+      },
+      "details" : {
+        "type" : "text"
+      },
+      "embeddings" : {
+        "type" : "dense_vector",
+        "dims" : 384
+      },
+      "images" : {
+        "type" : "text"
+      },
+      "link" : {
+        "type" : "text"
+      },
+      "posted" : {
+        "type" : "date"
+      },
+      "related_tags" : {
+        "type" : "keyword"
+      },
+      "tags" : {
+        "type" : "keyword"
+      },
+      "title" : {
+        "type" : "text"
+      },
+      "uid" : {
+        "type" : "text"
+      }
+    }
+  }
+}

@@ -1,10 +1,11 @@
+import elasticsearch
 from elasticsearch import Elasticsearch
 from config import settings
 
 
 def get_es_client() -> Elasticsearch:
     """ """
-    client = Elasticsearch(
+    client = elasticsearch.Elasticsearch(
         settings.ES_HOST,
         http_auth=(settings.ES_USERNAME, settings.ES_PASSWORD),
         verify_certs=False,
