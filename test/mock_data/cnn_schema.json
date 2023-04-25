@@ -1,0 +1,43 @@
+{
+    "aliases" : {
+      "hwf" : { }
+    },
+    "mappings" : {
+      "properties" : {
+        "channel" : {
+          "type" : "keyword"
+        },
+        "comment_count" : {
+          "type" : "text"
+        },
+        "details" : {
+          "type" : "text"
+        },
+        "embeddings" : {
+          "type" : "dense_vector",
+          "dims" : 384
+        },
+        "likes" : {
+          "type" : "text"
+        },
+        "link" : {
+          "type" : "text"
+        },
+        "posted" : {
+          "type" : "date"
+        },
+        "tags" : {
+          "type" : "keyword"
+        },
+        "title" : {
+          "type" : "text"
+        },
+        "uid" : {
+          "type" : "text"
+        },
+        "views" : {
+          "type" : "text"
+        }
+      }
+    }
+  }

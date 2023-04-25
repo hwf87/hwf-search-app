@@ -1,15 +1,13 @@
+import json
 import pytest
+from fastapi.testclient import TestClient
 from typing import Iterator, Mapping, Union
 from elasticmock import elasticmock
 from elasticsearch import Elasticsearch, helpers
-import json
-from fastapi.testclient import TestClient
 
 import sys
 
 sys.path[0] = sys.path[0] + "/app"
-
-# from api.routers.search import tag_search
 from db.elastic import get_es_client
 from main import app
 
@@ -17,18 +15,21 @@ client = TestClient(app)
 
 
 class MockEsData:
-    def __init__(self, test_index, data_path):
+    def __init__(self, test_index: str, schema_path: str, data_path: str):
         self.es = get_es_client()
         self.test_index = test_index
+        self.schema = self._read_json_data(path=schema_path)
         self.mock_data = self._read_json_data(path=data_path)
 
-    # TODO: create mappings
-    # TODO: create index
-    # TODO: create alias
-    # TODO: create multi index at once
-
-    def create(self):
+    def create_index(self, index_name: str, body: dict, es: Elasticsearch) -> None:
         """ """
+        es.indices.create(index=index_name, body=body)
+
+    def execute(self):
+        """ """
+        # create index
+        self.create_index(index_name=self.test_index, body=self.schema, es=self.es)
+        # insert mock data
         if self.es and self.mock_data:
             self.bulk_insert(
                 actions=self.load_action_batch(
@@ -74,6 +75,28 @@ class MockEsData:
             batches.append(meta)
 
 
+def create_mock_es_data():
+    mock_map = {
+        "houzz": {
+            "data": "./test/mock_data/houzz_data_mock.json",
+            "schema": "./test/mock_data/houzz_schema.json",
+        },
+        "cnn": {
+            "data": "./test/mock_data/cnn_data_mock.json",
+            "schema": "./test/mock_data/cnn_schema.json",
+        },
+        "tedtalk": {
+            "data": "./test/mock_data/tedtalk_data_mock.json",
+            "schema": "./test/mock_data/tedtalk_schema.json",
+        },
+    }
+    for index_name, val in mock_map.items():
+        MED = MockEsData(
+            test_index=index_name, schema_path=val["schema"], data_path=val["data"]
+        )
+        MED.execute()
+
+
 @elasticmock
 @pytest.mark.parametrize(
     "tag, expect",
@@ -81,12 +104,11 @@ class MockEsData:
 )
 def test_tag_search(tag: str, expect: set):
     """ """
-    test_index = "test_houzz"
+    # createe mock data
+    create_mock_es_data()
 
-    MED = MockEsData(
-        test_index=test_index, data_path="./test/mock_data/houzz_data_mock.json"
-    )
-    MED.create()
+    # mock test
+    test_index = "houzz"
     response = client.get(f"/search/tag/{test_index}?tag={tag}&offset=0&limit=10")
     response = response.json()
     answer = set([item["uid"] for item in response])

@@ -1,0 +1,37 @@
+{
+  "aliases" : {
+    "hwf" : { }
+  },
+  "mappings" : {
+    "properties" : {
+      "author" : {
+        "type" : "keyword"
+      },
+      "details" : {
+        "type" : "text"
+      },
+      "embeddings" : {
+        "type" : "dense_vector",
+        "dims" : 384
+      },
+      "link" : {
+        "type" : "text"
+      },
+      "posted" : {
+        "type" : "date"
+      },
+      "tags" : {
+        "type" : "keyword"
+      },
+      "title" : {
+        "type" : "text"
+      },
+      "uid" : {
+        "type" : "text"
+      },
+      "views" : {
+        "type" : "text"
+      }
+    }
+  }
+}
