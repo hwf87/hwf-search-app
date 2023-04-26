@@ -16,8 +16,8 @@ class MockEsData:
     def __init__(self, test_index: str, schema_path: str, data_path: str):
         self.es = get_es_client()
         self.test_index = test_index
-        self.schema = self._read_json_data(path=schema_path)
-        self.mock_data = self._read_json_data(path=data_path)
+        self.schema = read_json_data(path=schema_path)
+        self.mock_data = read_json_data(path=data_path)
 
     def create_index(self, index_name: str, body: dict, es: Elasticsearch) -> None:
         """ """
@@ -37,11 +37,6 @@ class MockEsData:
                 ),
                 es=self.es,
             )
-
-    def _read_json_data(self, path: str) -> json:
-        f = open(path)
-        my_json_list = json.load(f)
-        return my_json_list
 
     def load_action_batch(
         self, op_type: str, index_name: str, documents: list
@@ -73,19 +68,26 @@ class MockEsData:
             batches.append(meta)
 
 
+def read_json_data(path: str) -> json:
+    f = open(path)
+    json_data = json.load(f)
+    return json_data
+
+
 def create_mock_es_data():
+    base_path = "./test/mock_es_data"
     mock_map = {
         "houzz": {
-            "data": "./test/mock_data/houzz_data_mock.json",
-            "schema": "./test/mock_data/houzz_schema.json",
+            "data": f"{base_path}/houzz_data_mock.json",
+            "schema": f"{base_path}/houzz_schema.json",
         },
         "cnn": {
-            "data": "./test/mock_data/cnn_data_mock.json",
-            "schema": "./test/mock_data/cnn_schema.json",
+            "data": f"{base_path}/cnn_data_mock.json",
+            "schema": f"{base_path}/cnn_schema.json",
         },
         "tedtalk": {
-            "data": "./test/mock_data/tedtalk_data_mock.json",
-            "schema": "./test/mock_data/tedtalk_schema.json",
+            "data": f"{base_path}/tedtalk_data_mock.json",
+            "schema": f"{base_path}/tedtalk_schema.json",
         },
     }
     for index_name, val in mock_map.items():
