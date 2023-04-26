@@ -1,6 +1,5 @@
 import pytest
 from typing import List
-
 from test.utils import client, read_json_data
 
 
