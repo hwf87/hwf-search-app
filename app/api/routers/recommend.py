@@ -1,5 +1,4 @@
 from typing import List, Optional
-from elasticsearch_dsl import Search
 from fastapi import APIRouter, Query
 
 from db.elastic import get_es_client
@@ -30,16 +29,14 @@ async def recommend_by_user(
         min_length=3,
         max_length=200,
     ),
+    kanban: Optional[str] = Query(settings.ES_ALIAS),
     offset: Optional[int] = Query(0, ge=0),
     limit: Optional[int] = Query(10, ge=0, le=100),
 ) -> List[Items]:
     """ """
     es = get_es_client()
-    search = Search(using=es, index=settings.ES_ALIAS)
-
     embeddings = infer_embeddings(q)
-    body = {
-        "size": 10,
+    query_body = {
         "query": {
             "script_score": {
                 "query": {"match_all": {}},
@@ -49,9 +46,10 @@ async def recommend_by_user(
                 },
             }
         },
+        "from": offset,
+        "size": limit,
     }
-    search.update_from_dict(body)
-    search = search[offset : offset + limit]
-    response = search.execute().to_dict()
+    response = es.search(index=kanban, body=query_body)
+    response = dict(response)
 
     return parse_response_to_items(response)
