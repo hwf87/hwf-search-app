@@ -1,5 +1,4 @@
 from typing import List, Optional
-from elasticsearch_dsl import Search
 from fastapi.encoders import jsonable_encoder
 from fastapi import APIRouter, Query, Path, Body
 
@@ -35,10 +34,13 @@ async def get_items_from_kanban(
 ) -> List[Items]:
     """ """
     es = get_es_client()
-    search = Search(using=es, index=kanban_name)
-    search = search.sort({"posted": {"order": orderby}})
-    search = search[offset : offset + limit]
-    response = search.execute().to_dict()
+    query_body = {
+        "sort": [{"posted": {"order": orderby}}],
+        "from": offset,
+        "size": limit,
+    }
+    response = es.search(index=kanban_name, body=query_body)
+    response = dict(response)
 
     return parse_response_to_items(response)
 

@@ -1,0 +1,13 @@
+{
+    "uid": "item-1234",
+    "title": "Sample Item",
+    "details": "This is a sample item",
+    "posted": "2023-04-15",
+    "tags": [
+      "fastapi",
+      "python",
+      "web development"
+    ],
+    "link": "https://example.com/sample-item",
+    "highlight": {}
+}
