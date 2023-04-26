@@ -39,9 +39,25 @@ docker network ls
 ```
 
 4. Data Ingestion
-> Clone the ETL repo and Follow its RERADME to prepare data
+> We provide 2 options for preparing dataset
+- Option 1: Clone the ETL repo and Follow its RERADME to prepare data
 ```
+# Follow the Readme step, it will ingest over 20,000 documents for you
 git clone https://github.com/hwf87/hwf-search-etl.git
+```
+
+- Option 2: Just create a small mock dataset with following commands
+```
+# prepare local develop env
+conda create -n search_engine python=3.8
+conda activate search_engine
+cd ./hwf-search-app
+pip install -r requirements.txt
+
+# Create small dataset (72 documents will be created)
+# Note that you need to modified ES_HOST in .env if you are running code locally
+# ES_HOST="127.0.0.1:9200"
+bash create_mock_es_data.sh
 ```
 
 5. Build search app
@@ -89,6 +105,8 @@ streamlit run HOME.py
 
 ## Unit Test
 ```
+# Note that you need to modified ES_HOST in .env if you are running code locally
+# ES_HOST="127.0.0.1:9200"
 bash unit_test.sh
 ```
 
