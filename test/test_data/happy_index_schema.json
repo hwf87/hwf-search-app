@@ -1,0 +1,15 @@
+{
+    "aliases": {
+        "alias_name": {}
+    },
+    "mappings": {
+        "properties": {
+        "field1": {
+            "type": "keyword"
+        },
+        "field2": {
+            "type": "text"
+        }
+        }
+    }
+}
