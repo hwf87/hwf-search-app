@@ -103,6 +103,7 @@ streamlit run HOME.py
 # streamlit run HOME.py --server.port 8501 --server.serverAddress='0.0.0.0'
 ```
 
+
 ## Unit Test
 ```
 # Note that you need to modified ES_HOST in .env if you are running code locally
@@ -111,6 +112,7 @@ bash unit_test.sh
 ```
 - PyTest Screenshot
 ![plot](./docs/pytest_result.png)
+
 
 ## Precommit
 - Black config: find ```pyproject.toml```
@@ -134,6 +136,9 @@ repos:
     hooks:
     -   id: flake8
 ```
+- Precommit Screenshot
+![plot](./docs/precommit.png)
+
 
 ## CI/CD
 - Githun Actions
