@@ -109,6 +109,8 @@ streamlit run HOME.py
 # ES_HOST="127.0.0.1:9200"
 bash unit_test.sh
 ```
+- PyTest Screenshot
+![plot](./docs/pytest_result.png)
 
 ## Precommit
 - Black config: find ```pyproject.toml```
