@@ -7,10 +7,10 @@ This is a project that using Streamlit for the frontend and FastAPI for the back
 [[Data Engineering] Build a search App with FastAPI + Elasticsearch + Streamlit](https://jackyfu1995.medium.com)
 
 ## Architecture Overview
-
+![plot](./docs/search_app_arch.png)
 
 ## DEMO
-
+![plot](./docs/search_app_demo.gif)
 
 ## How to Start
 1. git clone https://github.com/hwf87/hwf-search-app.git
