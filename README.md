@@ -10,7 +10,8 @@ This is a project that using Streamlit for the frontend and FastAPI for the back
 ![plot](./docs/search_app_arch.png)
 
 ## DEMO
-[![Watch the video](./docs/demo.png)](https://vimeo.com/823397030)
+https://user-images.githubusercontent.com/62203984/236084515-839510cd-d2e0-4bb7-b42a-3cabbf8ae95b.mp4
+> (check [Here](https://vimeo.com/823397030) for full demo video)
 
 ## How to Start
 1. git clone https://github.com/hwf87/hwf-search-app.git
