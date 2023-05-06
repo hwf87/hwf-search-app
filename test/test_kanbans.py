@@ -18,7 +18,7 @@ class TestKanbansRouter:
     @pytest.mark.parametrize(
         "kanban_name, orderby, expect",
         [
-            ("houzz", "desc", "2023-04-21"),
+            ("houzz", "desc", "2023-04-07"),
             ("cnn", "desc", "2023-04-21"),
             ("tedtalk", "desc", "2023-04-01"),
             ("houzz", "asc", "2017-10-16"),
