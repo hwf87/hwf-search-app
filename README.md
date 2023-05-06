@@ -7,10 +7,11 @@ This is a project that using Streamlit for the frontend and FastAPI for the back
 [[Data Engineering] Build a search App with FastAPI + Elasticsearch + Streamlit](https://jackyfu1995.medium.com)
 
 ## Architecture Overview
-
+![plot](./docs/search_app_arch.png)
 
 ## DEMO
-
+https://user-images.githubusercontent.com/62203984/236084515-839510cd-d2e0-4bb7-b42a-3cabbf8ae95b.mp4
+> (check [Here](https://vimeo.com/823397030) for full demo video)
 
 ## How to Start
 1. git clone https://github.com/hwf87/hwf-search-app.git
@@ -103,12 +104,16 @@ streamlit run HOME.py
 # streamlit run HOME.py --server.port 8501 --server.serverAddress='0.0.0.0'
 ```
 
+
 ## Unit Test
 ```
 # Note that you need to modified ES_HOST in .env if you are running code locally
 # ES_HOST="127.0.0.1:9200"
 bash unit_test.sh
 ```
+- PyTest Screenshot
+![plot](./docs/pytest_result.png)
+
 
 ## Precommit
 - Black config: find ```pyproject.toml```
@@ -132,6 +137,9 @@ repos:
     hooks:
     -   id: flake8
 ```
+- Precommit Screenshot
+![plot](./docs/precommit.png)
+
 
 ## CI/CD
 - Githun Actions
